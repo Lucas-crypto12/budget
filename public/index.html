@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MobilePay Bogfører</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-logo">MP</div>
+        <div>
+          <div class="brand-name">MobilePay</div>
+          <div class="brand-sub">Bogfører</div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <button id="btn-add-customer" class="btn btn-primary btn-full">+ Tilføj kunde</button>
+      </div>
+
+      <div class="sidebar-customers">
+        <div class="sidebar-label">Kunder</div>
+        <ul id="customer-list" class="customer-list"></ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="cron-status">
+          <span class="cron-dot"></span>
+          <span id="cron-text">Henter sync-plan...</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div id="welcome" class="welcome-screen">
+        <div class="welcome-content">
+          <div class="welcome-icon">📊</div>
+          <h2>Vælg en kunde</h2>
+          <p>Klik på en kunde i listen til venstre, eller tilføj en ny for at komme i gang.</p>
+        </div>
+      </div>
+      <div id="customer-view" class="hidden"></div>
+    </main>
+  </div>
+
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div id="modal" class="modal"></div>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
