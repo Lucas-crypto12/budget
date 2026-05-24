@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Customer {
+  id   String @id @default(cuid())
+  name String
+
+  // MobilePay (Vipps) credentials
+  mobilepayClientId             String
+  mobilepayClientSecret         String
+  mobilepaySubscriptionKey      String
+  mobilepayMerchantSerialNumber String
+
+  // e-conomic credentials
+  economicAppSecretToken      String
+  economicAgreementGrantToken String
+  economicJournalNumber       Int
+
+  lastSyncAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  accountMappings AccountMapping[]
+  transactions    BookedTransaction[]
+}
+
+// Maps a MobilePay entry type (capture, refund, fee, payout)
+// to specific debit/credit accounts in e-conomic
+model AccountMapping {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  entryType     String  // e.g. "capture", "refund", "fee", "payout"
+  debitAccount  Int
+  creditAccount Int
+  vatCode       String? // e.g. "B25" for 25% moms
+
+  @@unique([customerId, entryType])
+}
+
+// Audit log of every transaction that has been booked to e-conomic
+model BookedTransaction {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  pspReference  String   // MobilePay's unique reference — used to prevent duplicates
+  reference     String?  // Merchant's own reference
+  amount        Float
+  currency      String
+  entryType     String
+  ledgerDate    DateTime
+  bookedAt      DateTime @default(now())
+  voucherNumber Int?     // e-conomic voucher number after booking
+
+  @@unique([customerId, pspReference])
+}
